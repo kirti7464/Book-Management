@@ -1,25 +1,55 @@
 const bookModel= require("../model/booksModel")
 const userModel= require("../model/userModel")
 const reviewModel= require("../model/reviewModel")
+const { isValid, isValidRequestBody } = require("../util/validation")
 const createBook =async function(req,res){
     try{
         let input = req.body
         let {title,excerpt,userId,ISBN,category,subcategory}=req.body
+        if (!isValidRequestBody(input))
+          return res.status(400).send({
+              status: false,
+              message: "Please provide data for creating book",
+            });
         if(!title) return res.status(400).send({status: false,
             message: "Please provide title of the book"})
+
         if(!excerpt) return res.status(400).send({status: false,
             message: "Please provide excerpt of the book"})
+        if(isValid(excerpt)) return res.status(400).send({status: false,
+                message: "Please provide valid excerpt "})
+
         if(!userId) return res.status(400).send({status: false,
             message: "Please provide user ID of the of the user"})
+        if(isValidRequestBody(userId)) return res.status(400).send({status: false,
+                message: "Please provide valid userId "})
+
         if(!ISBN) return res.status(400).send({status: false,
             message: "Please provide ISBN of the book"})
+        if(isValid(ISBN)) return res.status(400).send({status: false,
+                message: "Please provide valid ISBN "})
+        
         if(!category) return res.status(400).send({status: false,
             message: "Please provide category of the book"})
+        if(isValid(category)) return res.status(400).send({status: false,
+                message: "Please provide valid category "})
+
         if(!subcategory) return res.status(400).send({status: false,
            message: "Please provide subcategory of the book"})
+        if(isValid(subcategory)) return res.status(400).send({status: false,
+            message: "Please provide valid subcategory "})
+        //unique title and ISBN
+        let registeredTitle=await bookModel.findOne({title:title})
+        if(registeredTitle) return res.status(400).send({status: false,
+            message: "A book is already created with the title ..make changes in the title of the book"})
+        let registeredISBN =await bookModel.findOne({ISBN:ISBN})
+        if(registeredISBN) return res.status(400).send({status: false,
+            message: "A book is already created with the ISBN ..make changes in the ISBN of the book"})
+        //userId exists or not
         let user= await userModel.findById(userId)
         if(!user) return res.status(400).send({status: false,
             message: "Please provide a valid user Id"})
+        
         let bookData= await bookModel.create(input)
         return res.status(201).send({status:true,data:bookData})
     }
@@ -62,7 +92,7 @@ const getBookById= async function(req,res){
         let result={...book._doc}
         result.reviewData=review
         if(review.length==0) return res.status(200).send({status: true,
-            message: 'Books list',data:book})
+            message: 'Books list',data:result})
         return res.status(200).send({status:true,message:"Books list",data:result})
     }
     catch(error){
@@ -73,11 +103,31 @@ const updateBook = async function(req,res){
     try{
         let bookId= req.params.bookId
         let {title,excerpt,releasedAt,ISBN}=req.body
+        let updates={}
+        if(title){
+            let registeredTitle=await bookModel.findOne({title:title})//unique title
+            if(registeredTitle) return res.status(400).send({status: false,
+                message: "A book is already created with this title ..please choose different title"})
+            updates.title=title
+        }
+        if(excerpt){
+            updates.excerpt=excerpt
+        }
+        if(releasedAt){
+            updates.releasedAt=releasedAt
+        }
+        if(ISBN){
+            let registeredISBN =await bookModel.findOne({ISBN:ISBN}) //unique ISBN
+            if(registeredISBN) return res.status(400).send({status: false,
+                message: "A book is already created with this ISBN ..please choose different ISBN"})
+            updates.ISBN=ISBN
+        }
+   
         let book= await bookModel.findOne({_id:bookId,isDeleted:false})
         if(!book) return res.status(404).send({status: false,
             message: "There is no book with this id"})
         //validation on each input and updation works properly
-        let updatedData= await bookModel.findByIdAndUpdate(bookId,req.body,{new:true})
+        let updatedData= await bookModel.findByIdAndUpdate(bookId,updates,{new:true})
         return res.status(200).send({
             status: true,
             message: 'Success',
