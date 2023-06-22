@@ -97,25 +97,24 @@ const updateBook = async function(req,res){
         if(!isValidObjectId(bookId)) return res.status(400).send({status: false,
             message: "Please provide valid book Id"})
         let {title,excerpt,releasedAt,ISBN}=req.body
-        let updates={}
+        
         if(title){
             if(!isValid(title)) return res.status(400).send({status: false,
                 message: "Please provide valid title "}) 
             let registeredTitle=await bookModel.findOne({title:title})//unique title
             if(registeredTitle) return res.status(400).send({status: false,
                 message: "A book is already created with this title ..please choose different title"})
-            updates.title=title
         }
         if(excerpt){
             if(!isValid(excerpt)) return res.status(400).send({status: false,
                 message: "Please provide valid excerpt "})
-            updates.excerpt=excerpt
+            
         }
         if(releasedAt){
             const dateFormat = /^\d{4}-\d{2}-\d{2}$/
             if((typeof releasedAt != "Date")&&(!dateFormat.test(releasedAt))) return res.status(400).send({status: false,
                 message: "Please provide valid releasedAt time "})
-            updates.releasedAt=releasedAt
+           
         }
         if(ISBN){
             if(!isValidISBN(ISBN)) return res.status(400).send({status: false,
@@ -123,14 +122,14 @@ const updateBook = async function(req,res){
             let registeredISBN =await bookModel.findOne({ISBN:ISBN}) //unique ISBN
             if(registeredISBN) return res.status(400).send({status: false,
                 message: "A book is already created with this ISBN ..please choose different ISBN"})
-            updates.ISBN=ISBN
+            
         }
    
         let book= await bookModel.findOne({_id:bookId,isDeleted:false})
         if(!book) return res.status(404).send({status: false,
             message: "There is no book with this id"})
         //validation on each input and updation works properly
-        let updatedData= await bookModel.findByIdAndUpdate(bookId,updates,{new:true})
+        let updatedData= await bookModel.findByIdAndUpdate(bookId,req.body,{new:true})
         return res.status(200).send({
             status: true,
             message: 'Success',

@@ -6,6 +6,9 @@ const createReview= async function(req,res){
      try{
         let bookId=req.params.bookId
         let {review,rating,reviewedBy}=req.body
+        if(!isValidObjectId(bookId)) return res.status(400).send({status: false,
+            message: "Please provide valid book Id"})
+
         if(!isValidRequestBody(req.body)) return res.status(400).send({
             status: false,
             message: "Please provide data for creating review",
@@ -27,11 +30,8 @@ const createReview= async function(req,res){
         if(!isValid(reviewedBy)) return res.status(400).send({status: false,
             message: "Please provide valid name "})
         
-        if(!isValidObjectId(bookId)) return res.status(400).send({status: false,
-            message: "Please provide valid bookId "})
         
         let book= await bookModel.findOne({_id:bookId,isDeleted:false})
-        console.log(book)
         //book existence
         if(!book) return res.status(400).send({status:false,message:"There is no book with this Id"})
         let reviewDoc=await reviewModel.create({...req.body,bookId:bookId,reviewedAt:new Date()})
@@ -56,6 +56,8 @@ const createReview= async function(req,res){
 const updateReview = async function(req,res){
     try{
         let bookId= req.params.bookId
+        if(!isValidObjectId(bookId)) return res.status(400).send({status: false,
+            message: "Please provide valid book Id"})
         let reviewId= req.params.reviewId
         let {review, rating,reviewedBy}=req.body
         let updates={}
@@ -101,6 +103,8 @@ const updateReview = async function(req,res){
 const deleteReview = async function(req,res){
     try{
         let bookId= req.params.bookId
+        if(!isValidObjectId(bookId)) return res.status(400).send({status: false,
+            message: "Please provide valid book Id"})
         let reviewId= req.params.reviewId
         //review Doc existence
         let reviewDoc= await reviewModel.findOne({_id:reviewId,isDeleted:false})
