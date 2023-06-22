@@ -54,6 +54,7 @@ const createUser= async function(req,res){
 const loginUser= async function(req,res){
     try{
         let {email,password}=req.body
+        
         if(!isValidRequestBody(req.body)) return res.status(400).send({
             status: false,
             message: "Please provide credentials",
@@ -69,9 +70,11 @@ const loginUser= async function(req,res){
         let user = await userModel.findOne({email:email,password:password})
         if(!user) return res.status(401).send({status: false,
             message: "Please provide correct credentials... or register first"})
-        
+            
         let token= jwt.sign({userId:user._id,exp:232934892384092},SECRET_KEY)
-        res.setHeaders["token",token]
+        
+        res.setHeader("token",token)
+        console.log(res)
         return res.status(200).send({status: true,
             data: {token:token}})
         }

@@ -10,6 +10,12 @@ const isValid = function (value) {
     a=a.toString()
     return a.match(/([1-5])/)
   }
+  const isValidISBN = function (value) {
+    if (typeof value === "undefined" || value === null) return false;
+    if (typeof value === "number" && value.trim().length === 0) return false;
+    if(!value.match(/^[0-9-]+$/)) return false
+    return true;
+  };
   
   const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0;
@@ -24,11 +30,12 @@ const isValid = function (value) {
     if(MobileNum.length !== 10) {
         return false
     }
-    return MobileNum.match(/^[0-9]+$/)
+    if(MobileNum.length==10)
+    {return MobileNum.match(/^[0-9]+$/)}
   };
   function isValidtitle(title){
     return ["Mr","Mrs","Miss"].includes(title)
 }
   
 
-module.exports = {isValid, isValidRequestBody, isValidEmail,isValidObjectId,isValidRating,isValidtitle ,isValidMobileNum}
+module.exports = {isValid, isValidRequestBody, isValidEmail,isValidISBN,isValidObjectId,isValidRating,isValidtitle ,isValidMobileNum}

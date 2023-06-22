@@ -1,7 +1,7 @@
 const bookModel= require("../model/booksModel")
 const userModel= require("../model/userModel")
 const reviewModel= require("../model/reviewModel")
-const { isValid, isValidRequestBody } = require("../util/validation")
+const { isValid, isValidRequestBody,isValidISBN } = require("../util/validation")
 const createBook =async function(req,res){
     try{
         let input = req.body
@@ -16,27 +16,27 @@ const createBook =async function(req,res){
 
         if(!excerpt) return res.status(400).send({status: false,
             message: "Please provide excerpt of the book"})
-        if(isValid(excerpt)) return res.status(400).send({status: false,
+        if(!isValid(excerpt)) return res.status(400).send({status: false,
                 message: "Please provide valid excerpt "})
 
         if(!userId) return res.status(400).send({status: false,
             message: "Please provide user ID of the of the user"})
-        if(isValidRequestBody(userId)) return res.status(400).send({status: false,
+        if(!isValidRequestBody(userId)) return res.status(400).send({status: false,
                 message: "Please provide valid userId "})
 
         if(!ISBN) return res.status(400).send({status: false,
             message: "Please provide ISBN of the book"})
-        if(isValid(ISBN)) return res.status(400).send({status: false,
+        if(!isValidISBN(ISBN)) return res.status(400).send({status: false,
                 message: "Please provide valid ISBN "})
         
         if(!category) return res.status(400).send({status: false,
             message: "Please provide category of the book"})
-        if(isValid(category)) return res.status(400).send({status: false,
+        if(!isValid(category)) return res.status(400).send({status: false,
                 message: "Please provide valid category "})
 
         if(!subcategory) return res.status(400).send({status: false,
            message: "Please provide subcategory of the book"})
-        if(isValid(subcategory)) return res.status(400).send({status: false,
+        if(!isValid(subcategory)) return res.status(400).send({status: false,
             message: "Please provide valid subcategory "})
         //unique title and ISBN
         let registeredTitle=await bookModel.findOne({title:title})

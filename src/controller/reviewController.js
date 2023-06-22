@@ -31,6 +31,7 @@ const createReview= async function(req,res){
             message: "Please provide valid bookId "})
         
         let book= await bookModel.findOne({_id:bookId,isDeleted:false})
+        console.log(book)
         //book existence
         if(!book) return res.status(400).send({status:false,message:"There is no book with this Id"})
         let reviewDoc=await reviewModel.create({...req.body,bookId:bookId,reviewedAt:new Date()})
