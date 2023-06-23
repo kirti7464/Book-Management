@@ -35,6 +35,10 @@ const createUser= async function(req,res){
 
         if(!password) return res.status(400).send({status: false,
             message: "Please provide password"})
+             
+        if(password.length<=8||password.length>=10){
+            return res.status(400).send({status: false, message : "Please provide valid password..password can have minimun 8 and maximum 10 characters"})
+        }
         //unique email
         let duplicateEmail= await userModel.findOne({email:email})
         if(duplicateEmail) return res.status(400).send({status: false,
@@ -65,8 +69,9 @@ const loginUser= async function(req,res){
                 message: "Please provide valid email" }); 
         
         
-        if(!password) return res.status(400).send({status: false,
+        if(!password ) return res.status(400).send({status: false,
             message: "Please provide password"})
+        
         let user = await userModel.findOne({email:email,password:password})
         if(!user) return res.status(401).send({status: false,
             message: "Please provide correct credentials... or register first"})
