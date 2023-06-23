@@ -83,7 +83,7 @@ const getBookById= async function(req,res){
         if(!book) return res.status(404).send({status: false,
             message: "There is no book available with this id"})
         let review=await reviewModel.find({bookId:bookId,isDeleted:false})
-        let result={...book._doc}
+        let result={...book._doc}//need confrm
         result.reviewData=review
         return res.status(200).send({status:true,message:"Books list",data:result})
     }

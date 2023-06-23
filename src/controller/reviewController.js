@@ -91,7 +91,7 @@ const updateReview = async function(req,res){
         await reviewModel.findByIdAndUpdate(reviewId,req.body)
 
         //finding all reviews with given bookId
-        let reviewArr= await reviewModel.find({bookId:bookId})
+        let reviewArr= await reviewModel.find({bookId:bookId,isDeleted:false})
         let result={...book._doc}
         result.reviewsData=reviewArr
         return res.status(200).send({status: true,message: 'Books list',data:result})
@@ -113,9 +113,11 @@ const deleteReview = async function(req,res){
         let book= await bookModel.findById({_id:bookId,isDeleted:false})
         if(!book) return res.status(400).send({status:false,message:"Please provide correct bookId or the book is deleted"})
 
-        await reviewModel.findByIdAndUpdate(reviewId,{isDeleted:true})
-
-        await bookModel.findOneAndUpdate({_id:bookId},{ $inc: { reviews: -1 }},{new:true})
+       let reviewDta= await reviewModel.findByIdAndUpdate(reviewId,{isDeleted:true})
+       if(reviewDta)
+        {
+            await bookModel.findOneAndUpdate({_id:bookId},{ $inc: { reviews: -1 }},{new:true})
+        }
         return res.status(200).send({status: true,message: 'Review deleted succesfully!!'})
 
     }

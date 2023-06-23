@@ -31,7 +31,7 @@ const createUser= async function(req,res){
 
         if(!phone) return res.status(400).send({status: false,
             message: "Please provide phone number of the user"})
-        if(isValidMobileNum(phone)) return res.status(400).send({ status: false, message: "Please provide valid mobile number" });
+        if(!isValidMobileNum(phone)) return res.status(400).send({ status: false, message: "Please provide valid mobile number" });
 
         if(!password) return res.status(400).send({status: false,
             message: "Please provide password"})
