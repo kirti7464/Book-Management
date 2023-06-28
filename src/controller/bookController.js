@@ -2,6 +2,27 @@ const bookModel= require("../model/booksModel")
 const userModel= require("../model/userModel")
 const reviewModel= require("../model/reviewModel")
 const { isValid, isValidRequestBody,isValidISBN,isValidObjectId} = require("../util/validation")
+const {uploadFile}= require("../aws/aws")
+
+const createCover = async function(req,res){
+    try{
+        let files= req.files
+        if(files && files.length>0){
+            //upload to s3 and get the uploaded link
+            // res.send the link back to frontend/postman
+            let uploadedFileURL= await uploadFile( files[0] )
+            return res.status(201).send({msg: "file uploaded succesfully", data: uploadedFileURL})
+        }
+        else{
+            return res.status(400).send({ msg: "No file found" })
+        }
+        
+    }
+    catch(err){
+        return res.status(500).send({msg: err})
+    }
+}
+
 const createBook =async function(req,res){
     try{
         let input = req.body
@@ -23,7 +44,7 @@ const createBook =async function(req,res){
 
         if(!userId) return res.status(400).send({status: false,
             message: "Please provide user ID of the of the user"})
-        if(!isValidRequestBody(userId)) return res.status(400).send({status: false,
+        if(!isValidObjectId(userId)) return res.status(400).send({status: false,
                 message: "Please provide valid userId "})
 
         if(!ISBN) return res.status(400).send({status: false,
@@ -158,4 +179,4 @@ const deleteBook=async function(req,res){
         return res.status(500).send({status:false,message:error.message})
     }
 }
-module.exports={createBook,getAllBooks,getBookById,updateBook,deleteBook}
+module.exports={createBook,getAllBooks,getBookById,updateBook,deleteBook,createCover}

@@ -36,7 +36,7 @@ const createUser= async function(req,res){
         if(!password) return res.status(400).send({status: false,
             message: "Please provide password"})
              
-        if(password.length<=8||password.length>=10){
+        if(!(password.length>=8)||!(password.length<=15)){
             return res.status(400).send({status: false, message : "Please provide valid password..password can have minimun 8 and maximum 10 characters"})
         }
         //unique email
@@ -79,7 +79,7 @@ const loginUser= async function(req,res){
         let token= jwt.sign({userId:user._id,exp:232934892384092},SECRET_KEY)
         
         res.setHeader("token",token)
-        console.log(res)
+        // console.log(res)
         return res.status(200).send({status: true,
             data: {token:token}})
         }

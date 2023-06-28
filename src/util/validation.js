@@ -31,7 +31,7 @@ const isValid = function (value) {
         return false
     }
     if(MobileNum.length==10)
-    {return MobileNum.match(/^[0-9]+$/)}
+    {return MobileNum.match(/^[0-9]+$/)}//  
   };
   function isValidtitle(title){
     return ["Mr","Mrs","Miss"].includes(title)

@@ -4,6 +4,9 @@ const mongoose= require("mongoose")
 const route= require("./route/route")
 require("dotenv").config()
 
+const multer= require("multer");
+const { AppConfig } = require('aws-sdk');
+
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
@@ -15,6 +18,8 @@ mongoose.connect(MONGODB_URL,{
 }).catch((error)=>{
     console.log("Error in connecting mongodb",error)
 })
+
+app.use( multer().any())
 
 app.use("/",route)
 

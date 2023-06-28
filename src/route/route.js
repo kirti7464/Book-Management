@@ -1,10 +1,14 @@
 const express = require("express")
 const router = express.Router()
 const {createUser,loginUser} = require("../controller/userController")
-const {createBook,getAllBooks,getBookById,updateBook,deleteBook}=require("../controller/bookController")
+const {createCover,createBook,getAllBooks,getBookById,updateBook,deleteBook}=require("../controller/bookController")
 const {createReview,updateReview,deleteReview}=require("../controller/reviewController")
 const authenticate=require("../middleware/Authentication")
 const authorise=require("../middleware/Authorisation")
+
+
+//aws
+router.post("/aws",createCover)
 
 //User APIs
 router.post("/register",createUser)
